@@ -1,0 +1,16 @@
+{
+  "name": "currency-monorepo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:backend": "pnpm --filter backend start:dev",
+    "build:backend": "pnpm --filter backend build",
+    "start:frontend": "pnpm --filter frontend dev",
+    "build:frontend": "pnpm --filter frontend build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.12.1"
+}
