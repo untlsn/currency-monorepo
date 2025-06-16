@@ -6,6 +6,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { DB, DRIZZLE_ORM } from 'src/database/drizzle.datasource';
+import { exchangeTransactions, NewExchangeTransactions } from 'src/database/schema';
 import { ExchangeCacheService } from 'src/exchange-cache/exchange-cache.service';
 
 type DummyApiResponse = { exchange_rate: number };
@@ -64,5 +65,21 @@ export class ExchangeService {
 
   getTransactions() {
     return this.db.query.exchangeTransactions.findMany();
+  }
+
+  private saveTransaction(transaction: NewExchangeTransactions) {
+    this.db.insert(exchangeTransactions).values(transaction);
+  }
+
+  async calculateTransaction(eur: number) {
+    const exchangeRate = await this.getExchangeRate();
+    const pln = eur * exchangeRate;
+
+    this.saveTransaction({
+      eur,
+      pln,
+      exchangeRate,
+    });
+    return pln;
   }
 }
