@@ -1,3 +1,4 @@
+import ToggleThemeButton from "@/components/ToggleThemeButton";
 import Image from "next/image";
 
 export default function Home() {
@@ -7,6 +8,7 @@ export default function Home() {
         <div className="text-center space-y-2 relative">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">EUR to PLN Exchange</h1>
           <p className="text-muted-foreground">Live exchange rates and currency conversion</p>
+          <ToggleThemeButton />
         </div>
       </div>
     </div>
