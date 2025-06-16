@@ -3,10 +3,15 @@ import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Euro, Banknote, RefreshCw, TrendingUp } from "lucide-react";
+import { ExchangeRateRefreshTag } from "@/data/tags";
+import { refreshExchangeRate } from "./actions";
 
-export default function Home() {
-  const exchangeRate = 2;;
+
+export default async function Home() {
   const isRefreshing = false;
+  const exchangeRate = await fetch(`${process.env.NEXT_PUBLIC_NESTJS_API_URL}/exchange`, {
+    next: { tags: [ExchangeRateRefreshTag] }
+  }).then(res => res.text());
 
 
   return (
@@ -22,9 +27,11 @@ export default function Home() {
         <Card className="border-gray-200 dark:border-gray-700">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Current Exchange Rate</CardTitle>
-            <Button variant="ghost" size="sm" disabled={isRefreshing}>
-              <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
-            </Button>
+            <form className="contents" action={refreshExchangeRate}>
+              <Button variant="ghost" size="sm" disabled={isRefreshing}>
+                <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
+              </Button>
+            </form>
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-2">
@@ -33,7 +40,7 @@ export default function Home() {
               <span className="text-xl">=</span>
               <Banknote className="h-8 w-8 text-red-600 dark:text-red-400" />
               <span className="text-2xl font-bold text-green-600 dark:text-green-400">
-                {exchangeRate ? `${exchangeRate.toFixed(4)} PLN` : "Loading..."}
+                {exchangeRate ? `${exchangeRate} PLN` : "Loading..."}
               </span>
             </div>
           </CardContent>
