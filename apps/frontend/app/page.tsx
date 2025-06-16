@@ -1,10 +1,11 @@
 import ToggleThemeButton from "@/components/ToggleThemeButton";
 import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Euro, Banknote, RefreshCw, TrendingUp } from "lucide-react";
 import { ExchangeRateRefreshTag } from "@/data/tags";
 import { refreshExchangeRate } from "./actions";
+import CalculateExchangeForm from "@/components/CalculateExchangeForm";
 
 
 export default async function Home() {
@@ -45,8 +46,14 @@ export default async function Home() {
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent>Placeholder</CardContent>
+        <Card className="border-gray-200 dark:border-gray-700">
+          <CardHeader>
+            <CardTitle>Currency Converter</CardTitle>
+            <CardDescription>Convert EUR to PLN using live rates</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CalculateExchangeForm />
+          </CardContent>
         </Card>
       </div>
     </div>

@@ -6,3 +6,7 @@ import { ExchangeRateRefreshTag } from '@/data/tags';
 export async function refreshExchangeRate() {
   revalidateTag(ExchangeRateRefreshTag);
 }
+
+export async function handleConversion() {
+  
+}
