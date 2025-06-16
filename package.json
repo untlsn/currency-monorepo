@@ -6,8 +6,10 @@
   "scripts": {
     "start:backend": "pnpm --filter backend start:dev",
     "build:backend": "pnpm --filter backend build",
+    "start:backend:prod": "pnpm --filter backend start:prod",
     "start:frontend": "pnpm --filter frontend dev",
-    "build:frontend": "pnpm --filter frontend build"
+    "build:frontend": "pnpm --filter frontend build",
+    "start:frontend:prod": "pnpm --filter frontend start"
   },
   "keywords": [],
   "author": "",
