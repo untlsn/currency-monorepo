@@ -1,12 +1,7 @@
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import { ExchangeCacheService } from 'src/exchange-cache/exchange-cache.service';
 
 type DummyApiResponse = { exchange_rate: number };
 type ExchangeRate = number;
@@ -15,11 +10,9 @@ type ExchangeRate = number;
 export class CurrencyEvaluationService {
   private readonly dummyApiUrl: string;
   private readonly dummyApiKey: string;
-  private readonly CACHE_KEY = 'exchange_rate';
-  private readonly CACHE_TTL = 60 * 1000;
 
   constructor(
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private exchangeCacheService: ExchangeCacheService,
     private configService: ConfigService,
   ) {
     const dummyApiUrl = this.configService.get<string>('DUMMY_API_URL');
@@ -33,13 +26,6 @@ export class CurrencyEvaluationService {
 
     this.dummyApiUrl = dummyApiUrl;
     this.dummyApiKey = dummyApiKey;
-  }
-
-  private saveExchangeRate(value: ExchangeRate): Promise<ExchangeRate> {
-    return this.cacheManager.set(this.CACHE_KEY, value, this.CACHE_TTL);
-  }
-  private get cachedExchangeRate(): Promise<ExchangeRate | undefined> {
-    return this.cacheManager.get(this.CACHE_KEY);
   }
 
   private async fetchDummyApiData(): Promise<ExchangeRate> {
@@ -61,8 +47,8 @@ export class CurrencyEvaluationService {
 
   async getExchangeRate(): Promise<ExchangeRate> {
     return (
-      (await this.cachedExchangeRate) ??
-      this.saveExchangeRate(await this.fetchDummyApiData())
+      (await this.exchangeCacheService.cachedExchangeRate) ??
+      this.exchangeCacheService.saveExchangeRate(await this.fetchDummyApiData())
     );
   }
 }
