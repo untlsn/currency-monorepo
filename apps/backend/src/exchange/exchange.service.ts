@@ -1,6 +1,11 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import { DB, DRIZZLE_ORM } from 'src/database/drizzle.datasource';
 import { ExchangeCacheService } from 'src/exchange-cache/exchange-cache.service';
 
 type DummyApiResponse = { exchange_rate: number };
@@ -14,6 +19,7 @@ export class ExchangeService {
   constructor(
     private exchangeCacheService: ExchangeCacheService,
     private configService: ConfigService,
+    @Inject(DRIZZLE_ORM) private db: DB,
   ) {
     const dummyApiUrl = this.configService.get<string>('DUMMY_API_URL');
     const dummyApiKey = this.configService.get<string>('DUMMY_API_API_KEY');
@@ -54,5 +60,9 @@ export class ExchangeService {
 
   async calculateExchange(amount: number): Promise<number> {
     return amount * (await this.getExchangeRate());
+  }
+
+  getTransactions() {
+    return this.db.query.exchangeTransactions.findMany();
   }
 }
