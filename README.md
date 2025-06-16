@@ -26,6 +26,26 @@ pnpm --filter backend run build
 pnpm --filter backend run start:prod
 ```
 
+### Database
+
+#### Migrate
+
+```bash
+pnpm --filter backend run db:migrate
+```
+
+#### Push
+
+```bash
+pnpm --filter backend run db:push
+```
+
+#### Generate
+
+```bash
+pnpm --filter backend run db:generate
+```
+
 ## NextJS Frontend
 
 ### Development
@@ -45,8 +65,6 @@ pnpm --filter frontend run build
 ```bash
 pnpm --filter frontend run start
 ```
-
-## Monorepo
 
 
 
