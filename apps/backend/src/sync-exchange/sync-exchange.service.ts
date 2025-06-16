@@ -1,15 +1,27 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 
 type DummyApiResponse = { exchange_rate: number };
+type ExchangeRate = number;
 
 @Injectable()
 export class CurrencyEvaluationService {
   private readonly dummyApiUrl: string;
   private readonly dummyApiKey: string;
+  private readonly CACHE_KEY = 'exchange_rate';
+  private readonly CACHE_TTL = 60 * 1000;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private configService: ConfigService,
+  ) {
     const dummyApiUrl = this.configService.get<string>('DUMMY_API_URL');
     const dummyApiKey = this.configService.get<string>('DUMMY_API_API_KEY');
 
@@ -23,7 +35,14 @@ export class CurrencyEvaluationService {
     this.dummyApiKey = dummyApiKey;
   }
 
-  async fetchDummyApiData() {
+  private saveExchangeRate(value: ExchangeRate): Promise<ExchangeRate> {
+    return this.cacheManager.set(this.CACHE_KEY, value, this.CACHE_TTL);
+  }
+  private get cachedExchangeRate(): Promise<ExchangeRate | undefined> {
+    return this.cacheManager.get(this.CACHE_KEY);
+  }
+
+  private async fetchDummyApiData(): Promise<ExchangeRate> {
     try {
       const { data } = await axios.get<DummyApiResponse>(this.dummyApiUrl, {
         headers: {
@@ -38,5 +57,12 @@ export class CurrencyEvaluationService {
         'Failed to fetch data from external API.',
       );
     }
+  }
+
+  async getExchangeRate(): Promise<ExchangeRate> {
+    return (
+      (await this.cachedExchangeRate) ??
+      this.saveExchangeRate(await this.fetchDummyApiData())
+    );
   }
 }

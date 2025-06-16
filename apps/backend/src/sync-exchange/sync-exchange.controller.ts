@@ -9,6 +9,6 @@ export class SyncExchangeController {
 
   @Get()
   async syncExchange() {
-    return this.currencyEvaluationService.fetchDummyApiData();
+    return this.currencyEvaluationService.getExchangeRate();
   }
 }
