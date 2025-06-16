@@ -7,7 +7,7 @@ type DummyApiResponse = { exchange_rate: number };
 type ExchangeRate = number;
 
 @Injectable()
-export class CurrencyEvaluationService {
+export class ExchangeService {
   private readonly dummyApiUrl: string;
   private readonly dummyApiKey: string;
 
@@ -50,5 +50,9 @@ export class CurrencyEvaluationService {
       (await this.exchangeCacheService.cachedExchangeRate) ??
       this.exchangeCacheService.saveExchangeRate(await this.fetchDummyApiData())
     );
+  }
+
+  async calculateExchange(amount: number): Promise<number> {
+    return amount * (await this.getExchangeRate());
   }
 }
